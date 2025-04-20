@@ -1,60 +1,37 @@
-import os
-import shutil
-import subprocess
+import argparse
+from rich_argparse import RawTextRichHelpFormatter
+from .install import git_pip_install
 
-def git_pip_install(
-    repo: str= str(),
-    github_id: str=str(),
-    value: str=str(),
-    **_
-):
-    github_url = get_repository(
-        repo=repo,
-        github_id=github_id,
-        value=value
-    )
+def main():
+    parser = argparse.ArgumentParser(description="git-pip CLI")
+    subparsers = parser.add_subparsers(dest="command", required=True)
 
-    pip_url = f"git+{github_url}.git"
+    install_parser = subparsers.add_parser(
+        "install", 
+        help="Install a package from GitHub.",
+        description="""\
+Install a package from GitHub.
 
-    subprocess.run(["bash", "-i", "-c", f"pip install {pip_url}"])
+    Case1: git-pip install -gi <github-id> <module-name>
+    Case2: git-pip install <github-id>/<repo>
 
+If the default GitHub ID is set,
 
-def get_repository(
-    repo:str,
-    github_id:str,
-    value:str
-):
+    Case3: git-pip install <module-name>
 
-    def check_repository_full_name(value:str) -> bool:
-        if "/" in value:
-            return True
-        else:
-            return False
+""",
+    formatter_class=RawTextRichHelpFormatter
+)               
 
-    if check_repository_full_name(value):
-        return f"https://github.com/{value}"
-    else:
-        module_name = value
+    install_parser.add_argument("--repo", "-r", default="", type=str, help="The name of the repository.")
+    install_parser.add_argument("--github-id", "-gi", default="", type=str, help="The ID of the GitHub user.")
+    install_parser.add_argument("value", default="", type=str, help="github_id/repo or your module name.")
 
-    github_url = "https://github.com/{id}/{repo}"
+    install_parser.set_defaults()
 
-    if repo and value:
-        raise ValueError(
-            f"Both repo and module_name are provided. Please provide only one."
-        )
-    elif github_id:
-        if module_name:
-            repo_from_db = "get from db."
-            github_url = github_url.format(id=github_id, repo=repo_from_db)
-        elif repo:
-            github_url = github_url.format(id=github_id, repo=repo)
-        else:
-            raise ValueError(
-                f"Neither repo nor module_name is provided. Please provide one."
-            )
-    else:
-        raise ValueError(
-            f"Github_id is required."
-        )
+    args = parser.parse_args()
 
-    return github_url
+    git_pip_install(**vars(args))
+
+if __name__ == "__main__":
+    main()
