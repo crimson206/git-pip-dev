@@ -1,70 +1,60 @@
-from cleo import Application, Command
-from cleo.helpers import argument, option
-from typing import Any, Dict
+import os
+import shutil
+import subprocess
 
-# Import your installation function
-# from .install import git_pip_install
+def git_pip_install(
+    repo: str= str(),
+    github_id: str=str(),
+    value: str=str(),
+    **_
+):
+    github_url = get_repository(
+        repo=repo,
+        github_id=github_id,
+        value=value
+    )
 
-# Fix for the add function (not directly related to the Cleo conversion)
-def add(a: int, b: int) -> int:
-    if not isinstance(a, int) or not isinstance(b, int):
-        raise TypeError(f"Both arguments must be integers, received {type(a).__name__} and {type(b).__name__}")
-    return a + b
+    pip_url = f"git+{github_url}.git"
 
-class InstallCommand(Command):
-    name = "install"
-    description = "Install a package from GitHub."
-    help = """Install a package from GitHub.
+    subprocess.run(["bash", "-i", "-c", f"pip install {pip_url}"])
 
-Case1: git-pip install -gi <github-id> <module-name>
-Case2: git-pip install <github-id>/<repo>
 
-If the default GitHub ID is set,
+def get_repository(
+    repo:str,
+    github_id:str,
+    value:str
+):
 
-Case3: git-pip install <module-name>
-"""
+    def check_repository_full_name(value:str) -> bool:
+        if "/" in value:
+            return True
+        else:
+            return False
 
-    arguments = [
-        argument(
-            "value",
-            description="GitHub ID/repo or your module name.",
+    if check_repository_full_name(value):
+        return f"https://github.com/{value}"
+    else:
+        module_name = value
+
+    github_url = "https://github.com/{id}/{repo}"
+
+    if repo and value:
+        raise ValueError(
+            f"Both repo and module_name are provided. Please provide only one."
         )
-    ]
-
-    options = [
-        option(
-            "repo", "r",
-            description="The name of the repository.",
-            default="",
-        ),
-        option(
-            "github-id", "gi",
-            description="The ID of the GitHub user.",
-            default="",
+    elif github_id:
+        if module_name:
+            repo_from_db = "get from db."
+            github_url = github_url.format(id=github_id, repo=repo_from_db)
+        elif repo:
+            github_url = github_url.format(id=github_id, repo=repo)
+        else:
+            raise ValueError(
+                f"Neither repo nor module_name is provided. Please provide one."
+            )
+    else:
+        raise ValueError(
+            f"Github_id is required."
         )
-    ]
 
-    def handle(self) -> int:
-        # Convert command arguments to a dictionary similar to argparse's vars(args)
-        args_dict = {
-            "command": "install",
-            "value": self.argument("value"),
-            "repo": self.option("repo"),
-            "github_id": self.option("github-id"),
-        }
-        
-        # Call the original installation function
-        # git_pip_install(**args_dict)
-        
-        # For demonstration, just print the arguments
-        self.line(f"<info>Installing with arguments:</info> {args_dict}")
-        
-        return 0
-
-def main():
-    application = Application("git-pip", "1.0.0")
-    application.add(InstallCommand())
-    application.run()
-
-if __name__ == "__main__":
-    main()
+    return github_url
