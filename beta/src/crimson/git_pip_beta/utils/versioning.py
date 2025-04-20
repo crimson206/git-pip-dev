@@ -6,15 +6,17 @@ from crimson.git_pip_beta.processor import run_shell
 from packaging.version import Version, InvalidVersion
 from packaging.specifiers import SpecifierSet
 from typing import List, Optional
+import json
 
 TAG_PREFIX = "git-pip-v"
 
-def get_git_pip_tags() -> List[str]:
-    result = run_shell(
-        "git tag | grep ^git-pip-v",
-        capture_output=True
-    )
-    return result.stdout.strip().splitlines()
+
+def get_git_pip_tags(user: str, repo: str) -> List[str]:
+    cmd = f"gh api repos/{user}/{repo}/tags"
+    result = run_shell(cmd, capture_output=True, text=True, check=True)
+
+    tags = json.loads(result.stdout)
+    return [tag["name"] for tag in tags if tag["name"].startswith("git-pip-v")]
 
 def extract_version(tag: str) -> Optional[Version]:
     if tag.startswith(TAG_PREFIX):

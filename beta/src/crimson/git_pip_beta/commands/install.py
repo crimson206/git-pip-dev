@@ -1,63 +1,56 @@
+import re
 from cleo.helpers import argument, option
 from cleo.commands.command import Command  # Your customized Command class
+from crimson.git_pip_beta.utils.versioning import get_git_pip_tags, resolve_best_tag
 from ..processor import run_shell
 
-def git_pip_install(
-    repo: str= str(),
-    github_id: str=str(),
-    value: str=str(),
-    **_
-):
+def parse_repo_spec(value: str) -> tuple[str, str, str]:
+    # e.g. crimson206/git-pip>=0.1.0,<0.2.0
+    match = re.match(r"(?P<id>[^/]+)/(?P<repo>[^\s<>=!~]+)(?P<spec>.*)", value)
+    if not match:
+        raise ValueError("Invalid format. Expected id/repo[<spec>]")
+    return match.group("id"), match.group("repo"), match.group("spec") or ""
+
+def git_pip_install(repo: str, github_id: str, value: str):
     github_url = get_repository_url(
         repo=repo,
         github_id=github_id,
         value=value
     )
-
-    pip_url = f"git+{github_url}.git"
-
+    pip_url = f"git+{github_url}"
     run_shell(f"pip install {pip_url}")
 
 
 def get_repository_url(
-    repo:str,
-    github_id:str,
-    value:str
-):
+    repo: str,
+    github_id: str,
+    value: str
+) -> str:
+    def is_full_repo_path(val: str) -> bool:
+        return "/" in val
 
-    def check_repository_full_name(value:str) -> bool:
-        if "/" in value:
-            return True
-        else:
-            return False
-
-    if check_repository_full_name(value):
-        return f"https://github.com/{value}"
+    # 1. 우선순위: value > repo
+    if is_full_repo_path(value):
+        full_repo = value
+        version_spec = ""
     else:
-        module_name = value
+        full_repo = f"{github_id}/{repo or value}"
+        version_spec = ""
 
-    github_url = "https://github.com/{id}/{repo}"
+    # 2. 버전 포함 여부 확인 (e.g. repo==1.2.3 or value==1.2.3)
+    m = re.match(r"(?P<full>[^<>=!~]+)(?P<spec>[<>=!~].+)?", full_repo)
+    if not m:
+        raise ValueError("Invalid format for repo and version")
 
-    if repo and value:
-        raise ValueError(
-            f"Both repo and module_name are provided. Please provide only one."
-        )
-    elif github_id:
-        if module_name:
-            repo_from_db = "get from db."
-            github_url = github_url.format(id=github_id, repo=repo_from_db)
-        elif repo:
-            github_url = github_url.format(id=github_id, repo=repo)
-        else:
-            raise ValueError(
-                f"Neither repo nor module_name is provided. Please provide one."
-            )
-    else:
-        raise ValueError(
-            f"Github_id is required."
-        )
+    full_repo = m.group("full").strip("/")
+    version_spec = m.group("spec") or ""
 
-    return github_url
+    github_id, repo_name = full_repo.split("/")
+
+    tags = get_git_pip_tags(github_id, repo_name)
+    tag = resolve_best_tag(tags, version_spec) if version_spec else "main"
+
+    return f"https://github.com/{github_id}/{repo_name}.git@{tag}"
 
 
 class InstallCommand(Command):
@@ -85,7 +78,6 @@ If the default GitHub ID is set,
 
     def handle(self) -> int:
         git_pip_install(
-            command="install",
             value=self.argument("value"),
             repo=self.option("repo") or "",
             github_id=self.option("github-id") or ""
