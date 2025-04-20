@@ -135,7 +135,19 @@ files = [
     {file = "tomli-2.2.1.tar.gz", hash = "sha256:cd45e1dc79c835ce60f7404ec8119f2eb06d38b1deba146f07ced3bbc44505ff"},
 ]
 
+[[package]]
+name = "tomli-w"
+version = "1.2.0"
+description = "A lil' TOML writer"
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "tomli_w-1.2.0-py3-none-any.whl", hash = "sha256:188306098d013b691fcadc011abd66727d3c414c571bb01b1a174ba8c983cf90"},
+    {file = "tomli_w-1.2.0.tar.gz", hash = "sha256:2dd14fac5a47c27be9cd4c976af5a12d87fb1f0b4512f81d69cce3b35ae25021"},
+]
+
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.9"
-content-hash = "73bff7ea456f8bd9cfe9a736d5e63534fa59b3ce3f326931a9bda3dde1331d9b"
+content-hash = "1b918fe337b7d0bacaa36f2284f11ba5571d966e4eeff159e95c8347ea02476b"
