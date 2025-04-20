@@ -3,22 +3,18 @@ set -euo pipefail
 
 echo "🛠 Installing GitHub CLI (gh)..."
 
-# Install gh CLI (Ubuntu/Debian)
+# Install gh (if needed)
 sudo apt update
 sudo apt install -y gh
 
 echo "✅ gh installed"
 
-# Login using GitHub token (from GitHub Actions secret)
-# GH_TOKEN must be set as an environment variable
-if [ -z "${GH_TOKEN:-}" ]; then
-  echo "❌ GH_TOKEN is not set"
+# Just check status; login is automatic in GitHub Actions with GH_TOKEN
+echo "🔒 Checking GitHub CLI authentication..."
+
+if ! gh auth status; then
+  echo "❌ gh auth failed. Check GH_TOKEN or GitHub Actions secrets."
   exit 1
 fi
-
-echo "$GH_TOKEN" | gh auth login --with-token
-
-# Verify authentication
-gh auth status
 
 echo "✅ gh authenticated successfully"
