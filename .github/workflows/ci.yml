@@ -33,6 +33,6 @@ jobs:
             poetry-${{ runner.os }}-
 
       - name: Run CI script
-        run: ./ci.sh
+        run: ./scripts/workflows/ci.sh
         shell: bash
 
