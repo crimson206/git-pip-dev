@@ -17,5 +17,7 @@ jobs:
 
       - name: Setup gh CLI
         run: |
-          chmod +x ./scripts/setup-gh.sh
-          GH_TOKEN=${{ secrets.GH_TOKEN }} ./scripts/setup-gh.sh
+          chmod +x ./scripts/setup_gh.sh
+          GH_TOKEN=${{ secrets.GH_TOKEN }} ./scripts/setup_gh.sh
+
+
