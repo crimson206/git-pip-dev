@@ -8,8 +8,12 @@ if ! command -v poetry &> /dev/null; then
   curl -sSL https://install.python-poetry.org | python3 -
 
   export PATH="$HOME/.local/bin:$PATH"
-  export PATH="$APPDATA/Python/Scripts:$PATH"  # <-- Windows 환경 대응 추가
+  export PATH="/c/Users/runneradmin/AppData/Roaming/Python/Scripts:$PATH"
 fi
+
+echo "[DEBUG] PATH = $PATH"
+which poetry || echo "[DEBUG] poetry not found"
+poetry --version
 
 poetry install
 poetry run pytest
