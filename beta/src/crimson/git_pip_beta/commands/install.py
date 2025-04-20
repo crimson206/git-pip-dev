@@ -1,6 +1,6 @@
-import os
-import shutil
-import subprocess
+from cleo.helpers import argument, option
+from cleo.commands.command import Command  # Your customized Command class
+from ..processor import run_shell
 
 def git_pip_install(
     repo: str= str(),
@@ -16,7 +16,7 @@ def git_pip_install(
 
     pip_url = f"git+{github_url}.git"
 
-    subprocess.run(["bash", "-i", "-c", f"pip install {pip_url}"])
+    run_shell(f"pip install {pip_url}")
 
 
 def get_repository_url(
@@ -58,3 +58,36 @@ def get_repository_url(
         )
 
     return github_url
+
+
+class InstallCommand(Command):
+    name = "install"
+    description = "Install a package from GitHub."
+    help = """\
+Install a package from GitHub.
+
+    Case1: git-pip install -gi <github-id> <module-name>
+    Case2: git-pip install <github-id>/<repo>
+
+If the default GitHub ID is set,
+
+    Case3: git-pip install <module-name>
+"""
+
+    arguments = [
+        argument("value", description="github_id/repo or your module name.")
+    ]
+
+    options = [
+        option("repo", "r", flag=False, description="The name of the repository."),
+        option("github-id", "gi", flag=False, description="The ID of the GitHub user.")
+    ]
+
+    def handle(self) -> int:
+        git_pip_install(
+            command="install",
+            value=self.argument("value"),
+            repo=self.option("repo") or "",
+            github_id=self.option("github-id") or ""
+        )
+        return 0

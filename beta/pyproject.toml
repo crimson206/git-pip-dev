@@ -23,3 +23,12 @@ git-pip-beta = "crimson.git_pip_beta.main:main"
 [project.urls]
 "Homepage" = "https://github.com/crimson206/git-pip"
 "Bug Tracker" = "https://github.com/crimson206/git-pip/issues"
+
+[tool.poetry]
+packages = [
+  { include = "crimson", from = "src" }
+]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+
