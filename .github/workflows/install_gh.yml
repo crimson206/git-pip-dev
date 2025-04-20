@@ -1,0 +1,21 @@
+name: GH CLI Setup
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup-gh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Setup gh CLI
+        run: |
+          chmod +x ./scripts/setup-gh.sh
+          GH_TOKEN=${{ secrets.GH_TOKEN }} ./scripts/setup-gh.sh
