@@ -11,7 +11,7 @@ class PublishCommand(Command):
     description = "Publish the current version by tagging and pushing to Git."
 
     options = [
-        option("version", "v", flag=False, description="Override version to publish."),
+        option("tag-version", "t", flag=False, description="Override version to publish."),
     ]
 
     def handle(self) -> int:
@@ -25,7 +25,7 @@ class PublishCommand(Command):
         with pyproject_path.open("rb") as f:
             pyproject = tomllib.load(f)
 
-        version_override = self.option("version")
+        version_override = self.option("tag-version")
 
         if version_override:
             self.line(f"🔧 Overriding version to {version_override}")
@@ -43,7 +43,15 @@ class PublishCommand(Command):
             self.line_error("Version not found in pyproject.toml.")
             return 1
 
-        tag = f"v{version}"
+        tag = f"git-pip-v{version}"
+
+        self.line("🔍 Checking if the package can be built...")
+
+        try:
+            run_shell("python -m build", check=True)
+        except subprocess.CalledProcessError:
+            self.line_error("❌ Build failed. Check pyproject.toml or setup configuration.")
+            return 1
 
         # Check for uncommitted changes
         status = run_shell("git status --porcelain", capture_output=True, text=True)

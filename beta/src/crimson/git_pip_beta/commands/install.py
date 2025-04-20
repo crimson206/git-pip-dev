@@ -66,7 +66,7 @@ class InstallCommand(Command):
     help = """\
 Install a package from GitHub.
 
-    Case1: git-pip install -gi <github-id> <module-name>
+    Case1: git-pip install -i <github-id> <module-name>
     Case2: git-pip install <github-id>/<repo>
 
 If the default GitHub ID is set,
@@ -80,7 +80,7 @@ If the default GitHub ID is set,
 
     options = [
         option("repo", "r", flag=False, description="The name of the repository."),
-        option("github-id", "gi", flag=False, description="The ID of the GitHub user.")
+        option("github-id", "i", flag=False, description="The ID of the GitHub user.")
     ]
 
     def handle(self) -> int:
