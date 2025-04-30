@@ -2,7 +2,7 @@ import re
 from cleo.helpers import argument, option
 from cleo.commands.command import Command  # Your customized Command class
 from crimson.git_pip_beta.utils.versioning import get_git_pip_tags, resolve_best_tag
-from ..processor import run_shell
+from crimson.git_pip_beta.utils.processor import run_shell
 
 def parse_repo_spec(value: str) -> tuple[str, str, str]:
     # e.g. crimson206/git-pip>=0.1.0,<0.2.0

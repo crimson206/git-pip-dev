@@ -2,7 +2,7 @@ from cleo.commands.command import Command
 from pathlib import Path
 import os
 import subprocess
-from ..processor import run_shell
+from crimson.git_pip_beta.utils.processor import run_shell
 
 class AutoCompletionCommand(Command):
     name = "auto-completion"

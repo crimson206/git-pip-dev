@@ -1,7 +1,5 @@
-from ..processor import run_shell
-
 from typing import List
-from crimson.git_pip_beta.processor import run_shell
+from crimson.git_pip_beta.utils.processor import run_shell
 
 from packaging.version import Version, InvalidVersion
 from packaging.specifiers import SpecifierSet

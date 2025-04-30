@@ -7,7 +7,14 @@ config
 
 teamspace: crimson206
 
-pip install --teamspace crimson206 -gp module-name
+pip install --teamspace crimson206 module-name
+
+-t teamspace
+-u github-user-name
+
+teamspace default = user-name
+
+value = module-name / full-repo / repo
 
 
 https://github.com/crimson206/template
