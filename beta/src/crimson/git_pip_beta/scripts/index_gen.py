@@ -2,7 +2,7 @@ import subprocess
 import json
 import re
 from typing import List, Dict, Set
-
+from pathlib import Path
 
 def get_all_indices(tags: list[str]) -> Set[str]:
     """
@@ -50,8 +50,33 @@ def get_tag_asset_map(index: str) -> Dict[str, List[str]]:
     filtered = filter_tags(tags, index)
     return {tag: get_assets_for_tag(tag) for tag in filtered}
 
-tags = get_all_release_tags()
 
-print(get_all_indices(tags))
+def generate_index_html_for_index(index: str, repo: str, output_dir: str) -> None:
+    """
+    Generate an index.html file for a given index (e.g., dev, test) and save it under output_dir/index/index.html.
+    """
+    tag_asset_map = get_tag_asset_map(index)
+    output_path = Path(output_dir) / index / "index.html"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
 
-print(get_tag_asset_map("dev"))
+    html_lines = [
+        "<!DOCTYPE html>",
+        "<html>",
+        f"<head><title>{index} package index</title></head>",
+        "<body>",
+        f"<h1>{index} packages</h1>",
+        "<ul>"
+    ]
+
+    for tag, assets in tag_asset_map.items():
+        version = tag.removeprefix(f"gh-pip-{index}-v")
+        for asset in assets:
+            url = f"https://github.com/{repo}/releases/download/{tag}/{asset}"
+            html_lines.append(f'  <li><a href="{url}">{version} - {asset}</a></li>')
+
+    html_lines += ["</ul>", "</body>", "</html>"]
+
+    output_path.write_text("\n".join(html_lines), encoding="utf-8")
+
+
+generate_index_html_for_index("dev", "crimson206/git-pip-dev", Path("simple"))
