@@ -1,0 +1,19 @@
+- default:
+  - repo:
+     [
+      file-loader:dev>=0.2.0,
+      repo_name{version}
+    ]
+  - module:
+    [
+      crimson-templator:test>=0.2.0
+    ]
+- another_user:
+  - repo:
+    [
+      repo
+    ]
+  - module:
+    [
+      module_name
+    ]

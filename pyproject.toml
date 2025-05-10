@@ -1,0 +1,38 @@
+[project]
+name = "crimson-git-pip-rc"
+version = "0.1.3a2"
+description = "Your package description."
+readme = "README.md"
+authors = [
+  { name="Sisung Kim", email="sisung.kim1@gmail.com" },
+]
+
+dependencies = [
+]
+
+requires-python = ">=3.9,<4.0"
+
+[project.scripts]
+any-args = "crimson.git_pip_beta.poetry_experiment.any_args:main"
+git-pip-beta = "crimson.git_pip_beta.main:main"
+gh-pip = "crimson.git_pip_beta.pip_plugin.call_main:main"
+
+[project.urls]
+"Homepage" = "https://github.com/crimson206/git-pip"
+"Bug Tracker" = "https://github.com/crimson206/git-pip/issues"
+
+[tool.poetry]
+packages = [
+  { include = "crimson", from = "src" }
+]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.5"
+
+[[tool.poetry.source]]
+name = "gitpip"
+url = "https://crimson206.github.io/git-pip-dev/simple/dev/"
+priority = "supplemental"
+
+[tool.poetry.dependencies]
+crimson-git-pip-beta = {source = "gitpip"}

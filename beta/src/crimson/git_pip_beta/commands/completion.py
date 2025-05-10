@@ -1,8 +1,8 @@
 from cleo.commands.command import Command
 from pathlib import Path
 import os
-import subprocess
 from crimson.git_pip_beta.utils.processor import run_shell
+
 
 class AutoCompletionCommand(Command):
     name = "auto-completion"
@@ -34,10 +34,17 @@ class AutoCompletionCommand(Command):
             return 1
 
         # 🔁 run completions command: git-pip-beta completions <shell>
-        result = run_shell(f"git-pip-beta completions {shell_type}", check=True, capture_output=True, text=True)
+        result = run_shell(
+            f"git-pip-beta completions {shell_type}",
+            check=True,
+            capture_output=True,
+            text=True,
+        )
 
         if result.returncode != 0:
-            self.line(f"<error>Failed to generate completions: {result.stderr.strip()}</error>")
+            self.line(
+                f"<error>Failed to generate completions: {result.stderr.strip()}</error>"
+            )
             return 1
 
         completion_script = result.stdout
@@ -54,5 +61,7 @@ class AutoCompletionCommand(Command):
             else:
                 self.line(f"<comment>Already added to:</comment> {config_file}")
 
-        self.line("<info>✅ Auto-completion setup complete. Restart your shell or run 'source' manually.</info>")
+        self.line(
+            "<info>✅ Auto-completion setup complete. Restart your shell or run 'source' manually.</info>"
+        )
         return 0

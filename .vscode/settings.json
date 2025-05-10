@@ -1,0 +1,10 @@
+{
+    // Choose files that extension will operate on. By default activated on 3 files (todo.md, someday.md & todo.archive.md). Uses [Glob](https://code.visualstudio.com/docs/editor/glob-patterns). Examples:
+    // 
+    // Activate on any (.txt) file - `**/*.txt`.
+    // 
+    // Activate only on single file (todo.txt) - `**/todo.txt`
+    // 
+    // Activate on 2 files (todo.txt or task.txt) - `**/{todo,task}.txt`
+    "todomd.activatePattern": "**/{todo,someday,todo.*}.md"
+}

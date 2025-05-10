@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug gh-pip",
+        "type": "debugpy",
+        "request": "launch",
+        "program": "/home/crimson/miniconda3/envs/git-pip/bin/poetry",
+        "args": ["add", "pydantic"],
+        "console": "integratedTerminal",
+        "env": {
+          "GH_PIP_DEBUG": "1"
+        },
+        "justMyCode": false
+      }
+    ]
+}

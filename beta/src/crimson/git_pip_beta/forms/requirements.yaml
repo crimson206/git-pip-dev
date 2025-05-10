@@ -1,0 +1,5 @@
+module:
+  - user: crimson206
+  - module: crimson-file-loader
+  - version(optional): "*"
+  

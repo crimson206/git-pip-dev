@@ -4,6 +4,11 @@ import re
 from typing import List, Dict, Set
 from pathlib import Path
 
+"""
+Generate index.html here.
+"""
+
+
 def get_all_indices(tags: list[str]) -> Set[str]:
     """
     Extract all unique index values from tags following the pattern gh-pip-{index}-v{version}.
@@ -21,12 +26,10 @@ def run_gh_command(command: List[str]) -> str:
 
 def get_all_release_tags(repo: str = "crimson206/git-pip-dev") -> List[str]:
     """Get all release tags using the GitHub API."""
-    output = run_gh_command([
-        "gh", "api", f"repos/{repo}/releases",
-        "--paginate"
-    ])
+    output = run_gh_command(["gh", "api", f"repos/{repo}/releases", "--paginate"])
     data = json.loads(output)
     return [entry["tag_name"] for entry in data if "tag_name" in entry]
+
 
 def filter_tags(tags: List[str], index: str) -> List[str]:
     """Filter tags that match the gh-pip-{index}-v{version} pattern."""
@@ -36,11 +39,9 @@ def filter_tags(tags: List[str], index: str) -> List[str]:
 
 def get_assets_for_tag(tag: str) -> List[str]:
     """Get asset file names for a given release tag."""
-    output = run_gh_command([
-        "gh", "release", "view", tag,
-        "--json", "assets",
-        "--jq", ".assets[].name"
-    ])
+    output = run_gh_command(
+        ["gh", "release", "view", tag, "--json", "assets", "--jq", ".assets[].name"]
+    )
     return output.splitlines()
 
 
@@ -65,7 +66,7 @@ def generate_index_html_for_index(index: str, repo: str, output_dir: str) -> Non
         f"<head><title>{index} package index</title></head>",
         "<body>",
         f"<h1>{index} packages</h1>",
-        "<ul>"
+        "<ul>",
     ]
 
     for tag, assets in tag_asset_map.items():
@@ -79,4 +80,4 @@ def generate_index_html_for_index(index: str, repo: str, output_dir: str) -> Non
     output_path.write_text("\n".join(html_lines), encoding="utf-8")
 
 
-generate_index_html_for_index("dev", "crimson206/git-pip-dev", Path("simple"))
+generate_index_html_for_index("dev", "crimson206/git-pip-dev", "simple")

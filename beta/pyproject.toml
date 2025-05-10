@@ -1,6 +1,6 @@
 [project]
-name = "crimson-git-pip-beta"
-version = "0.1.3a1"
+name = "crimson-git-pip-dev"
+version = "0.1.3a2"
 description = "Your package description."
 readme = "README.md"
 authors = [
@@ -8,14 +8,18 @@ authors = [
 ]
 
 dependencies = [
-    "tomli-w (>=1.2.0,<2.0.0)"
-    
+    "tomli-w (>=1.2.0,<2.0.0)",
+    "crimson-git-pip-beta (>=0.1.3a1,<0.2.0)",
+    "crimson-auto-pydantic (>=0.1.9,<0.2.0)",
+    "sqlalchemy (>=2.0.40,<3.0.0)",    
 ]
+
 requires-python = ">=3.9,<4.0"
 
 [project.scripts]
+any-args = "crimson.git_pip_beta.poetry_experiment.any_args:main"
 git-pip-beta = "crimson.git_pip_beta.main:main"
-
+gh-pip = "crimson.git_pip_beta.pip_plugin.call_main:main"
 
 [project.urls]
 "Homepage" = "https://github.com/crimson206/git-pip"
@@ -28,3 +32,11 @@ packages = [
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.5"
+
+[[tool.poetry.source]]
+name = "gitpip"
+url = "https://crimson206.github.io/git-pip-dev/simple/dev/"
+priority = "supplemental"
+
+[tool.poetry.dependencies]
+crimson-git-pip-beta = {source = "gitpip"}
